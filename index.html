@@ -1,0 +1,1486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NameBridge</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #ffffff;
+      --ink: #172127;
+      --muted: #66737d;
+      --soft: #f5f7f7;
+      --soft-2: #eef4f3;
+      --line: #dce4e3;
+      --teal: #075a62;
+      --teal-2: #0b7780;
+      --coral: #de6f55;
+      --gold: #d49d34;
+      --green: #2f9278;
+      --shadow: 0 18px 55px rgba(21, 33, 39, 0.11);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--page);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, #fafbfb 0, #fafbfb 284px, #ffffff 284px),
+        var(--page);
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 284px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      padding: 26px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      min-height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 29px;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 9px;
+    }
+
+    .nav button,
+    .utility button {
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 48px;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: #3d4a53;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .nav button.active {
+      background: var(--soft-2);
+      color: var(--teal);
+      box-shadow: inset 4px 0 0 var(--teal);
+    }
+
+    .nav svg,
+    .utility svg,
+    .top-nav svg,
+    .button svg,
+    .save svg,
+    .panel-title svg {
+      width: 21px;
+      height: 21px;
+      stroke-width: 1.8;
+      flex: 0 0 auto;
+    }
+
+    .stat-block,
+    .tips {
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+
+    .stat-block h2 {
+      margin: 0 0 14px;
+      font-size: 15px;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      min-height: 42px;
+      font-size: 14px;
+    }
+
+    .stat-row strong {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .tips {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .tips h2 {
+      margin: 0 0 10px;
+      color: var(--ink);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .utility {
+      margin-top: auto;
+      display: grid;
+      gap: 8px;
+    }
+
+    .content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      min-height: 90px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 28px;
+    }
+
+    .top-nav {
+      display: flex;
+      align-items: stretch;
+      gap: 34px;
+      min-height: 90px;
+      scrollbar-width: none;
+    }
+
+    .top-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .top-nav button {
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #49545d;
+      font-size: 15px;
+      border-bottom: 4px solid transparent;
+      padding: 0 2px;
+    }
+
+    .top-nav button.active {
+      color: var(--teal);
+      border-bottom-color: var(--teal);
+    }
+
+    .account {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      white-space: nowrap;
+    }
+
+    .streak {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #e25531;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 13px;
+      background: #fbfcfc;
+    }
+
+    main {
+      padding: 18px 28px 20px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .person-hero {
+      display: grid;
+      grid-template-columns: minmax(300px, 392px) minmax(0, 1fr);
+      gap: 32px;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .portrait {
+      position: relative;
+      border-radius: 7px;
+      overflow: hidden;
+      min-height: 332px;
+      background: linear-gradient(135deg, #dcebea, #f6e8df);
+      box-shadow: 0 16px 36px rgba(21, 33, 39, 0.13);
+    }
+
+    .portrait img {
+      width: 100%;
+      height: 332px;
+      object-fit: cover;
+      object-position: center top;
+    }
+
+    .portrait .fallback {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 86px;
+      color: rgba(7, 90, 98, 0.7);
+      background:
+        radial-gradient(circle at 70% 18%, rgba(222, 111, 85, 0.2), transparent 24%),
+        linear-gradient(135deg, #d8eeed, #f9efea);
+    }
+
+    .portrait img:not([hidden]) + .fallback {
+      display: none;
+    }
+
+    .person-copy {
+      max-width: 620px;
+    }
+
+    .person-copy h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(44px, 5vw, 66px);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .real-name {
+      margin: 8px 0 16px;
+      color: #89929a;
+      font-size: 18px;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 13px;
+      color: #1e2b32;
+      font-weight: 650;
+      font-size: 15px;
+    }
+
+    .platform-icon {
+      width: 26px;
+      height: 19px;
+      border-radius: 5px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: #ee2b22;
+    }
+
+    .platform-icon.tiktok {
+      background: #111;
+    }
+
+    .platform-icon.instagram {
+      background: linear-gradient(135deg, #d83e7d, #f6a03e);
+    }
+
+    .platform-icon.youtube {
+      background: #ee2b22;
+    }
+
+    .platform-icon.tech {
+      background: var(--teal);
+    }
+
+    .divider {
+      width: 1px;
+      height: 18px;
+      background: var(--line);
+    }
+
+    .description {
+      margin: 26px 0 32px;
+      max-width: 520px;
+      color: #2c3940;
+      line-height: 1.65;
+      font-size: 16px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .button,
+    .save {
+      border-radius: 7px;
+      min-height: 52px;
+      padding: 0 22px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 750;
+      font-size: 15px;
+    }
+
+    .button {
+      border: 0;
+      color: #fff;
+      background: var(--teal);
+      box-shadow: 0 14px 26px rgba(7, 90, 98, 0.18);
+    }
+
+    .button:hover {
+      background: var(--teal-2);
+    }
+
+    .save {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #42505a;
+    }
+
+    .suggestions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+    }
+
+    .suggestion {
+      padding: 22px 24px;
+      border-right: 1px solid var(--line);
+      min-width: 0;
+    }
+
+    .suggestion:last-child {
+      border-right: 0;
+    }
+
+    .object-suggestion .hook-body {
+      grid-template-columns: 1fr;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 18px;
+      color: #25323a;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .hook-body {
+      display: grid;
+      grid-template-columns: 42% minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .hook-image {
+      position: relative;
+      min-height: 138px;
+      border-radius: 7px;
+      overflow: hidden;
+      background: var(--soft-2);
+    }
+
+    .hook-image img {
+      width: 100%;
+      height: 138px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .object-art {
+      height: 138px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #e9f4f3, #f8ebe5);
+      border: 1px solid #dbe7e5;
+    }
+
+    .object-art svg {
+      width: 76%;
+      height: 76%;
+      filter: drop-shadow(0 10px 18px rgba(21, 33, 39, 0.16));
+    }
+
+    .animated-object {
+      position: relative;
+      height: 148px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.95), transparent 28%),
+        radial-gradient(circle at 75% 18%, rgba(255, 203, 156, 0.44), transparent 28%),
+        linear-gradient(145deg, #e8f4f2, #fff3ec 72%);
+      border: 1px solid #d7e4e2;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 14px 30px rgba(21, 33, 39, 0.12);
+    }
+
+    .animated-object::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5), transparent 62%);
+      transform: translateY(36px) scaleX(1.3);
+    }
+
+    .animated-object svg {
+      position: relative;
+      width: 88%;
+      height: 88%;
+      filter: drop-shadow(0 18px 15px rgba(21, 33, 39, 0.2));
+    }
+
+    .object-carousel {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 38px 1fr 38px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .object-carousel button {
+      min-height: 38px;
+      border-radius: 7px;
+      border: 1px solid var(--line);
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #41505a;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .object-carousel button:hover {
+      border-color: rgba(7, 90, 98, 0.42);
+      color: var(--teal);
+    }
+
+    .object-carousel .another-object {
+      padding: 0 10px;
+      white-space: nowrap;
+    }
+
+    .object-count {
+      margin-top: 8px;
+      color: #77828a;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .hook-body p {
+      margin: 0;
+      color: #2d3b43;
+      font-size: 15px;
+      line-height: 1.58;
+    }
+
+    .micro-tip {
+      margin-top: 18px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 12px;
+      color: #77828a;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    .confidence {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) 1.8fr;
+      gap: 28px;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .confidence h2 {
+      margin: 0 0 4px;
+      font-size: 16px;
+    }
+
+    .confidence p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .confidence-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .confidence-grid button {
+      min-height: 64px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      color: #44515a;
+      font-size: 13px;
+    }
+
+    .confidence-grid button strong {
+      display: block;
+      color: #6f7a82;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .confidence-grid button.selected {
+      border-color: var(--teal);
+      box-shadow: inset 0 0 0 2px var(--teal);
+      color: var(--ink);
+      background: #fbffff;
+    }
+
+    .recent {
+      min-width: 0;
+    }
+
+    .recent-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 0 0 14px;
+    }
+
+    .recent h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .recent-head button {
+      border: 0;
+      background: transparent;
+      color: var(--teal);
+      font-weight: 750;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+    }
+
+    .recent-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .recent-card {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      min-width: 0;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+    }
+
+    .recent-card img,
+    .recent-fallback {
+      width: 58px;
+      height: 58px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: var(--soft-2);
+    }
+
+    .recent-fallback {
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .recent-card strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .recent-card span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+
+    .score-dot {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      border: 1px solid #9bd4c9;
+      color: var(--teal);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      background: #f3fbf9;
+    }
+
+    .people-view {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    .people-view.active {
+      display: block;
+    }
+
+    .people-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .person-tile {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .person-tile img,
+    .tile-fallback {
+      width: 100%;
+      aspect-ratio: 1.45;
+      object-fit: cover;
+      border-radius: 6px;
+      background: var(--soft-2);
+    }
+
+    .tile-fallback {
+      display: grid;
+      place-items: center;
+      color: var(--teal);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+    }
+
+    .person-tile strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .person-tile span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .review-view {
+      display: none;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    .review-view.active {
+      display: block;
+    }
+
+    .review-box {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fbfcfc;
+      padding: 18px;
+      color: #3a464e;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 1080px) {
+      body {
+        background: var(--page);
+      }
+
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding: 18px;
+      }
+
+      .nav,
+      .stat-block,
+      .tips,
+      .utility {
+        display: none;
+      }
+
+      .topbar {
+        min-height: 72px;
+        padding: 0 18px;
+      }
+
+      .top-nav {
+        min-height: 72px;
+        gap: 18px;
+        overflow-x: auto;
+      }
+
+      main {
+        padding: 18px;
+      }
+
+      .person-hero,
+      .confidence {
+        grid-template-columns: 1fr;
+      }
+
+      .suggestions {
+        grid-template-columns: 1fr;
+        border-bottom: 0;
+      }
+
+      .suggestion {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        padding-inline: 0;
+      }
+
+      .recent-strip,
+      .people-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .brand h1 {
+        font-size: 25px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        padding-block: 12px;
+      }
+
+      .top-nav {
+        min-height: 46px;
+        width: 100%;
+      }
+
+      .account {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .person-copy h2 {
+        font-size: 42px;
+      }
+
+      .portrait,
+      .portrait img {
+        min-height: 286px;
+        height: 286px;
+      }
+
+      .hook-body,
+      .confidence-grid,
+      .recent-strip,
+      .people-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .confidence {
+        padding-inline: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" fill="none">
+            <path d="M23.9 6.8c5.3 5.1 5.3 11.1.1 18.1-5.4-7-5.4-13 0-18.1Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M10.8 18.2c7.2-1 12 2.1 14.3 9.5-8.4 1.4-13.1-1.8-14.3-9.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M37.2 18.2c-7.2-1-12 2.1-14.3 9.5 8.4 1.4 13.1-1.8 14.3-9.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M14 39h20M24 27v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>NameBridge</h1>
+          <p>Remember the names.</p>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <button class="active" data-view="practice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+          Practice
+        </button>
+        <button data-view="people">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 19c0-2.1-1.8-3.8-4-3.8S8 16.9 8 19"/><circle cx="12" cy="9" r="3"/><path d="M5.5 17.8c-1.1-.6-1.8-1.7-1.8-3 0-1.9 1.5-3.4 3.4-3.4M18.5 17.8c1.1-.6 1.8-1.7 1.8-3 0-1.9-1.5-3.4-3.4-3.4"/></svg>
+          All People
+        </button>
+        <button data-view="review">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12a9 9 0 1 0 2.6-6.3"/><path d="M3 4v6h6"/></svg>
+          Review
+        </button>
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.8 1.8 0 0 0 .4 2l.1.1-2.2 2.2-.1-.1a1.8 1.8 0 0 0-2-.4 1.8 1.8 0 0 0-1.1 1.7V21h-3v-.5a1.8 1.8 0 0 0-1.1-1.7 1.8 1.8 0 0 0-2 .4l-.1.1-2.2-2.2.1-.1a1.8 1.8 0 0 0 .4-2A1.8 1.8 0 0 0 5 13.9H4.5v-3H5a1.8 1.8 0 0 0 1.7-1.1 1.8 1.8 0 0 0-.4-2l-.1-.1 2.2-2.2.1.1a1.8 1.8 0 0 0 2 .4A1.8 1.8 0 0 0 11.6 4V3.5h3V4a1.8 1.8 0 0 0 1.1 1.7 1.8 1.8 0 0 0 2-.4l.1-.1L20 7.4l-.1.1a1.8 1.8 0 0 0-.4 2 1.8 1.8 0 0 0 1.7 1.1h.5v3h-.5a1.8 1.8 0 0 0-1.8 1.4Z"/></svg>
+          Settings
+        </button>
+      </nav>
+
+      <section class="stat-block" aria-label="Today">
+        <h2>Today</h2>
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Practiced</span>
+          <strong id="practiced-count">1</strong>
+        </div>
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path d="m5 12 4 4L19 6"/></svg>
+          <span>Recalled</span>
+          <strong id="recalled-count">0</strong>
+        </div>
+        <div class="stat-row">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path d="M3 14h4l3-7 4 10 3-6h4"/></svg>
+          <span>Accuracy</span>
+          <strong id="accuracy-count">0%</strong>
+        </div>
+      </section>
+
+      <section class="tips">
+        <h2>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"><path d="M9 18h6M10 22h4"/><path d="M8 14c-1.4-1.2-2-2.8-2-4.5a6 6 0 0 1 12 0c0 1.7-.7 3.3-2 4.5-.7.6-1 1.3-1 2H9c0-.7-.3-1.4-1-2Z"/></svg>
+          Quick tips
+        </h2>
+        <p>Create a vivid mental image. The stranger the picture, the stickier the name. Review spaced over time.</p>
+      </section>
+
+      <div class="utility">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 6h16v12H4z"/><path d="M8 10h.1M12 10h.1M16 10h.1M9 14h6"/></svg>
+          Keyboard shortcuts
+        </button>
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.7 1.2c0 1.8-2.2 2.1-2.2 3.8M12 17.5h.1"/></svg>
+          Help
+        </button>
+      </div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <nav class="top-nav" aria-label="Workspace">
+          <button class="active" data-view="practice">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>
+            Practice
+          </button>
+          <button data-view="people">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 19c0-2.1-1.8-3.8-4-3.8S8 16.9 8 19"/><circle cx="12" cy="9" r="3"/></svg>
+            All People
+          </button>
+          <button data-view="review">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12a9 9 0 1 0 2.6-6.3"/><path d="M3 4v6h6"/></svg>
+            Review
+          </button>
+          <button type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+            Settings
+          </button>
+        </nav>
+        <div class="account">
+          <div class="streak">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M13.3 2.6c.6 3.1-.5 4.8-2.1 6.3-1.4 1.3-2.8 2.6-2.8 5 0 2.2 1.6 3.9 3.7 3.9 2.3 0 3.9-1.4 3.9-3.5 0-1.1-.4-2.2-1.2-3.1 2.6.8 4.2 2.9 4.2 5.3 0 3.2-2.8 5.5-6.7 5.5-4.2 0-7.3-2.9-7.3-7 0-3.7 2.1-5.8 4.1-7.5 1.7-1.5 3.4-2.9 4.2-4.9Z"/></svg>
+            7 day streak
+          </div>
+          <div class="avatar" aria-label="User avatar">JD</div>
+        </div>
+      </header>
+
+      <main>
+        <section class="practice-view" id="practice-view">
+          <div class="person-hero">
+            <div class="portrait">
+              <img id="portrait" alt="" referrerpolicy="no-referrer">
+              <div class="fallback" id="portrait-fallback">MB</div>
+            </div>
+            <div class="person-copy">
+              <h2 id="person-name">MrBeast</h2>
+              <p class="real-name" id="real-name">Jimmy Donaldson</p>
+              <div class="meta">
+                <span class="platform-icon youtube" id="platform-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M9 8.2v7.6l6-3.8-6-3.8Z"/></svg>
+                </span>
+                <span id="platform">YouTube</span>
+                <span class="divider"></span>
+                <span id="category">Content Creator</span>
+              </div>
+              <p class="description" id="description">Known for large-scale challenges, philanthropy, and record-breaking YouTube videos.</p>
+              <div class="actions">
+                <button class="button" id="pick-person" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l6 6"/></svg>
+                  Pick Another Person
+                </button>
+                <button class="save" id="save-person" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 4h12v17l-6-3-6 3V4Z"/></svg>
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="suggestions" aria-label="Memory suggestions">
+            <article class="suggestion">
+              <h3 class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="8"/><path d="M9 10h.1M15 10h.1M9 15c2 1.2 4 1.2 6 0"/></svg>
+                1. Face Hook
+              </h3>
+              <div class="hook-body">
+                <div class="hook-image">
+                  <img id="face-image" alt="" referrerpolicy="no-referrer">
+                </div>
+                <p id="face-hook">Notice his wide smile and mustache. Imagine the mustache turning into a stack of dollar bills.</p>
+              </div>
+              <div class="micro-tip">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="M9 18h6M10 22h4"/><path d="M8 14c-1.4-1.2-2-2.8-2-4.5a6 6 0 0 1 12 0c0 1.7-.7 3.3-2 4.5"/></svg>
+                Focus on a unique facial feature.
+              </div>
+            </article>
+
+            <article class="suggestion">
+              <h3 class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 19c0-2.1-1.8-3.8-4-3.8S8 16.9 8 19"/><circle cx="12" cy="9" r="3"/><path d="M18 8h3M19.5 6.5v3"/></svg>
+                2. Famous Link
+              </h3>
+              <div class="hook-body">
+                <div class="object-art" id="famous-art" aria-hidden="true"></div>
+                <p id="famous-link">Link Jimmy to Jim Carrey: a huge grin launching a giveaway challenge.</p>
+              </div>
+              <div class="micro-tip">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.1 0l2-2a5 5 0 0 0-7.1-7.1l-1 1"/><path d="M14 11a5 5 0 0 0-7.1 0l-2 2a5 5 0 0 0 7.1 7.1l1-1"/></svg>
+                Link them in a story.
+              </div>
+            </article>
+
+            <article class="suggestion object-suggestion">
+              <h3 class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M12 12 4.3 7.6M12 12l7.7-4.4M12 12v9"/></svg>
+                3. Object Image
+              </h3>
+              <div class="hook-body">
+                <div>
+                  <div class="animated-object" id="object-art" aria-label="Animated-film-style mnemonic object"></div>
+                  <div class="object-carousel" aria-label="Object image choices">
+                    <button id="prev-object" type="button" aria-label="Previous object image">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button class="another-object" id="another-object" type="button">
+                      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l6 6"/></svg>
+                      Another image
+                    </button>
+                    <button id="next-object" type="button" aria-label="Next object image">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  <div class="object-count" id="object-count">Image 1 of 3</div>
+                </div>
+                <p id="object-image">Picture a giant chocolate bar stamped with his name after every challenge.</p>
+              </div>
+              <div class="micro-tip">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M12 12v9"/></svg>
+                Play it like a bright 3D animated scene.
+              </div>
+            </article>
+          </div>
+
+          <section class="confidence" aria-labelledby="confidence-title">
+            <div>
+              <h2 id="confidence-title">How confident are you with this name?</h2>
+              <p>Your response helps optimize future practice.</p>
+            </div>
+            <div class="confidence-grid" id="confidence-grid"></div>
+          </section>
+
+          <section class="recent">
+            <div class="recent-head">
+              <h2>Recently Practiced</h2>
+              <button data-view="people" type="button">View all
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+            <div class="recent-strip" id="recent-strip"></div>
+          </section>
+        </section>
+
+        <section class="people-view" id="people-view">
+          <div class="recent-head">
+            <h2>All People</h2>
+            <button data-view="practice" type="button">
+              Back to practice
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="people-grid" id="people-grid"></div>
+        </section>
+
+        <section class="review-view" id="review-view">
+          <div class="recent-head">
+            <h2>Review Queue</h2>
+            <button data-view="practice" type="button">
+              Start practice
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="review-box" id="review-box">Names you mark below 3 confidence are queued here for your next spaced review session.</div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const people = [
+      {
+        name: "MrBeast",
+        real: "Jimmy Donaldson",
+        platform: "YouTube",
+        icon: "youtube",
+        category: "Content Creator",
+        description: "Known for large-scale challenges, philanthropy, and record-breaking YouTube videos.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/MrBeast_2023.jpg/500px-MrBeast_2023.jpg",
+        face: "Notice the wide smile and neat mustache. Imagine the mustache turning into a stack of prize money.",
+        famous: "Link Jimmy to Jim Carrey: a giant grin kicking off an impossible challenge.",
+        object: "Picture a huge chocolate bar stamped with BEAST, handed out at the finish line.",
+        objectType: "chocolate",
+        initials: "MB"
+      },
+      {
+        name: "Charli D'Amelio",
+        real: "Charli Grace D'Amelio",
+        platform: "TikTok",
+        icon: "tiktok",
+        category: "Dancer",
+        description: "A TikTok creator associated with dance trends, choreography, and mainstream creator culture.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Charli_D%27Amelio_in_2020.jpg",
+        face: "Use the center-parted dark hair and soft smile as the cue. Picture the hair part opening like a dance floor.",
+        famous: "Link Charli to Charlie Chaplin: silent-film steps suddenly become TikTok choreography.",
+        object: "Imagine a charm bracelet spelling CHARLI while each charm performs a tiny dance move.",
+        objectType: "bracelet",
+        initials: "CD"
+      },
+      {
+        name: "Khaby Lame",
+        real: "Khabane Lame",
+        platform: "TikTok",
+        icon: "tiktok",
+        category: "Comedian",
+        description: "Known for silent reaction videos that simplify overcomplicated life hacks.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/KhabyLame.jpg/500px-KhabyLame.jpg",
+        face: "Anchor on the deadpan expression and open-palmed gesture. Hear 'Lame' as he calmly points to the obvious answer.",
+        famous: "Link Khaby to Mr. Bean: both can land a joke with almost no words.",
+        object: "Picture a label maker printing KHABY on a simple tool that replaces a ridiculously complex gadget.",
+        objectType: "label",
+        initials: "KL"
+      },
+      {
+        name: "Marques Brownlee",
+        real: "Marques Keith Brownlee",
+        platform: "YouTube",
+        icon: "tech",
+        category: "Tech Reviewer",
+        description: "A technology reviewer known for crisp product videos, smartphones, and studio-level production.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Marques_Brownlee_cropped.jpg",
+        face: "Notice the calm gaze and close beard. Imagine a glossy phone reflecting the letters MKBHD across his glasses.",
+        famous: "Link Marques to Mark Zuckerberg: both live in tech, but Marques is holding the review scorecard.",
+        object: "Picture a matte black smartphone with a bright teal MKBHD sticker across the back.",
+        objectType: "phone",
+        initials: "MB"
+      },
+      {
+        name: "Emma Chamberlain",
+        real: "Emma Frances Chamberlain",
+        platform: "YouTube",
+        icon: "youtube",
+        category: "Creator",
+        description: "Known for conversational vlogs, fashion, coffee, and a casual editing style.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/38/Emma_Chamberlain_2019_vidcon.jpg",
+        face: "Use the expressive eyes and relaxed smile. Imagine a tiny camera reflecting in each eye.",
+        famous: "Link Emma to Emma Stone: both names light up, then one picks up a vlog camera and coffee.",
+        object: "Picture a coffee cup with CHAMBERLAIN written around the lid like a memory ring.",
+        objectType: "coffee",
+        initials: "EC"
+      },
+    ];
+
+    const confidenceLabels = ["Not at all", "A little", "Somewhat", "Quite a bit", "Very confident"];
+    const objectImageBank = {
+      chocolate: [
+        { type: "chocolate", text: "Picture a huge glossy chocolate bar stamped with BEAST, handed out at the finish line." },
+        { type: "prizeBox", text: "Imagine a teal prize chest bursting open with candy bars and the name MrBeast glowing inside." },
+        { type: "goldenTicket", text: "See a golden challenge ticket tucked into a chocolate wrapper marked Jimmy." }
+      ],
+      bracelet: [
+        { type: "bracelet", text: "Imagine a charm bracelet spelling CHARLI while each charm performs a tiny dance move." },
+        { type: "sneakers", text: "Picture bright dance sneakers tapping out Charli's name under a warm stage light." },
+        { type: "spotlight", text: "See a soft coral spotlight drawing a C on the floor before Charli steps into it." }
+      ],
+      label: [
+        { type: "label", text: "Picture a label maker printing KHABY on a simple tool that replaces a ridiculously complex gadget." },
+        { type: "easyButton", text: "Imagine a big easy button that Khaby silently points to after an overcomplicated hack." },
+        { type: "toolkit", text: "See a tiny toolkit opening to one obvious wrench labeled LAME." }
+      ],
+      phone: [
+        { type: "phone", text: "Picture a matte black smartphone with a bright teal MKBHD sticker across the back." },
+        { type: "camera", text: "Imagine a glossy camera lens reflecting Marques, Brownlee, and a perfect review score." },
+        { type: "keyboard", text: "See a clean keyboard where the M, K, B, H, and D keys glow in sequence." }
+      ],
+      coffee: [
+        { type: "coffee", text: "Picture a coffee cup with CHAMBERLAIN written around the lid like a memory ring." },
+        { type: "camera", text: "Imagine a tiny vlog camera sipping coffee while the lens blinks Emma's initials." },
+        { type: "journal", text: "See a warm notebook beside a latte, with Chamberlain written in a loose handwritten loop." }
+      ]
+    };
+
+    const state = {
+      index: 0,
+      practiced: 1,
+      recalled: 0,
+      objectIndexes: new Map(),
+      confidence: new Map(),
+      recent: [0, 4, 1, 2, 3]
+    };
+
+    const els = {
+      portrait: document.getElementById("portrait"),
+      faceImage: document.getElementById("face-image"),
+      fallback: document.getElementById("portrait-fallback"),
+      name: document.getElementById("person-name"),
+      real: document.getElementById("real-name"),
+      platform: document.getElementById("platform"),
+      category: document.getElementById("category"),
+      description: document.getElementById("description"),
+      platformIcon: document.getElementById("platform-icon"),
+      faceHook: document.getElementById("face-hook"),
+      famousLink: document.getElementById("famous-link"),
+      objectImage: document.getElementById("object-image"),
+      objectArt: document.getElementById("object-art"),
+      objectCount: document.getElementById("object-count"),
+      famousArt: document.getElementById("famous-art"),
+      confidenceGrid: document.getElementById("confidence-grid"),
+      recentStrip: document.getElementById("recent-strip"),
+      peopleGrid: document.getElementById("people-grid"),
+      practiced: document.getElementById("practiced-count"),
+      recalled: document.getElementById("recalled-count"),
+      accuracy: document.getElementById("accuracy-count"),
+      reviewBox: document.getElementById("review-box")
+    };
+
+    function iconPlay() {
+      return '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M9 8.2v7.6l6-3.8-6-3.8Z"/></svg>';
+    }
+
+    function objectSvg(type) {
+      const svgs = {
+        chocolate: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="92" cy="96" rx="57" ry="12" fill="#172127" opacity=".18"/><path d="M35 46c0-8 7-15 15-15h80c8 0 15 7 15 15v31c0 8-7 15-15 15H50c-8 0-15-7-15-15V46Z" fill="#078493"/><path d="M45 45c0-4 4-8 8-8h74c4 0 8 4 8 8v15H45V45Z" fill="#21a8b4"/><path d="M47 66h86" stroke="#fff" stroke-width="16" stroke-linecap="round" opacity=".92"/><path d="M62 66h55" stroke="#de6f55" stroke-width="8" stroke-linecap="round"/><path d="M48 91l20 10 78-14" stroke="#5b2c1f" stroke-width="14" stroke-linecap="round"/></svg>',
+        prizeBox: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="98" rx="52" ry="12" fill="#172127" opacity=".16"/><path d="M42 54h96v42H42z" fill="#0b7780"/><path d="M34 42h112v20H34z" fill="#0f9aaa"/><path d="M83 40h14v56H83z" fill="#f4c35a"/><path d="M67 41c-16-19 18-27 23-3 4-24 39-16 23 3" stroke="#f4c35a" stroke-width="10" stroke-linecap="round"/><circle cx="130" cy="35" r="6" fill="#de6f55"/><circle cx="48" cy="30" r="5" fill="#fff"/></svg>',
+        goldenTicket: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="92" rx="52" ry="13" fill="#172127" opacity=".15"/><path d="M42 42c11 8 11 24 0 32l82 18c7-7 10-18 4-30L42 42Z" fill="#d49d34"/><path d="M55 52l58 13M59 66l42 10" stroke="#fff3c6" stroke-width="7" stroke-linecap="round"/><path d="M50 41c12 1 25-7 34-18" stroke="#de6f55" stroke-width="8" stroke-linecap="round"/></svg>',
+        bracelet: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="95" rx="50" ry="11" fill="#172127" opacity=".14"/><ellipse cx="90" cy="60" rx="47" ry="31" stroke="#d49d34" stroke-width="13"/><circle cx="49" cy="47" r="14" fill="#de6f55"/><circle cx="132" cy="47" r="14" fill="#0b7780"/><circle cx="90" cy="91" r="15" fill="#fff" stroke="#172127" stroke-width="4"/><path d="M83 91h14" stroke="#0b7780" stroke-width="5" stroke-linecap="round"/></svg>',
+        sneakers: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="92" cy="95" rx="55" ry="12" fill="#172127" opacity=".16"/><path d="M35 76c32 7 55 3 78-18 18 8 29 21 35 36H35c-7-5-7-12 0-18Z" fill="#fff"/><path d="M35 76c32 7 55 3 78-18 18 8 29 21 35 36H35" stroke="#172127" stroke-width="5" stroke-linejoin="round"/><path d="M67 73h38M80 63l14 16" stroke="#de6f55" stroke-width="6" stroke-linecap="round"/><circle cx="125" cy="61" r="7" fill="#0b7780"/></svg>',
+        spotlight: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="98" rx="54" ry="13" fill="#172127" opacity=".14"/><path d="M75 28h30l22 67H53l22-67Z" fill="#ffe5d9"/><path d="M70 23h40v19H70z" fill="#172127"/><path d="M77 32h26" stroke="#de6f55" stroke-width="7" stroke-linecap="round"/><path d="M69 92c15-12 29-12 43 0" stroke="#0b7780" stroke-width="7" stroke-linecap="round"/></svg>',
+        label: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="96" rx="49" ry="11" fill="#172127" opacity=".14"/><rect x="31" y="34" width="118" height="58" rx="13" fill="#fff" stroke="#172127" stroke-width="5"/><path d="M48 54h83M48 71h58" stroke="#0b7780" stroke-width="8" stroke-linecap="round"/><circle cx="135" cy="62" r="9" fill="#de6f55"/><path d="M44 39c9-11 24-15 41-13" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".8"/></svg>',
+        easyButton: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="95" rx="52" ry="12" fill="#172127" opacity=".16"/><ellipse cx="90" cy="71" rx="55" ry="22" fill="#8d2d2d"/><ellipse cx="90" cy="58" rx="48" ry="26" fill="#de6f55"/><path d="M68 58h45" stroke="#fff" stroke-width="8" stroke-linecap="round"/><path d="M66 40c16-13 37-13 51 0" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".55"/></svg>',
+        toolkit: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="96" rx="52" ry="12" fill="#172127" opacity=".15"/><rect x="43" y="45" width="95" height="48" rx="9" fill="#0b7780"/><path d="M73 45v-8c0-6 5-10 11-10h13c6 0 11 4 11 10v8" stroke="#172127" stroke-width="7"/><path d="M54 63h72" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".82"/><path d="M70 78h40" stroke="#de6f55" stroke-width="7" stroke-linecap="round"/></svg>',
+        phone: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="98" rx="43" ry="11" fill="#172127" opacity=".16"/><rect x="61" y="12" width="59" height="96" rx="13" fill="#172127"/><rect x="68" y="24" width="45" height="72" rx="6" fill="#eff6f5"/><path d="M78 62h26" stroke="#0b7780" stroke-width="8" stroke-linecap="round"/><circle cx="107" cy="33" r="4" fill="#de6f55"/></svg>',
+        camera: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="91" cy="96" rx="52" ry="11" fill="#172127" opacity=".15"/><rect x="42" y="42" width="98" height="48" rx="11" fill="#172127"/><rect x="53" y="35" width="32" height="13" rx="5" fill="#0b7780"/><circle cx="93" cy="66" r="23" fill="#edf6f5"/><circle cx="93" cy="66" r="13" fill="#0b7780"/><circle cx="103" cy="57" r="5" fill="#fff" opacity=".9"/><circle cx="128" cy="53" r="6" fill="#de6f55"/></svg>',
+        keyboard: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="97" rx="55" ry="12" fill="#172127" opacity=".14"/><rect x="34" y="44" width="112" height="44" rx="10" fill="#fff" stroke="#172127" stroke-width="5"/><path d="M51 59h10M72 59h10M93 59h10M114 59h10M51 74h59" stroke="#0b7780" stroke-width="7" stroke-linecap="round"/><circle cx="132" cy="73" r="7" fill="#de6f55"/></svg>',
+        coffee: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="90" cy="98" rx="48" ry="11" fill="#172127" opacity=".15"/><path d="M58 44h62l-8 53H66L58 44Z" fill="#fff" stroke="#172127" stroke-width="5"/><path d="M63 27h52l5 17H58l5-17Z" fill="#de6f55"/><path d="M73 65h31" stroke="#0b7780" stroke-width="7" stroke-linecap="round"/><path d="M69 23c7-7 18-8 30-3" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".7"/></svg>',
+        journal: '<svg viewBox="0 0 180 120" fill="none"><ellipse cx="89" cy="96" rx="55" ry="12" fill="#172127" opacity=".14"/><path d="M46 30h76c9 0 16 7 16 16v50H62c-9 0-16-7-16-16V30Z" fill="#fff" stroke="#172127" stroke-width="5"/><path d="M62 30v66" stroke="#de6f55" stroke-width="7"/><path d="M78 52h42M78 68h33" stroke="#0b7780" stroke-width="7" stroke-linecap="round"/><circle cx="131" cy="39" r="8" fill="#d49d34"/></svg>'
+      };
+      return svgs[type] || svgs.label;
+    }
+
+    function objectOptionsFor(person) {
+      return objectImageBank[person.objectType] || objectImageBank.label;
+    }
+
+    function currentObjectIndex(person) {
+      return state.objectIndexes.get(person.name) || 0;
+    }
+
+    function renderObjectImage(person) {
+      const options = objectOptionsFor(person);
+      const index = currentObjectIndex(person) % options.length;
+      const option = options[index];
+      els.objectArt.innerHTML = objectSvg(option.type);
+      els.objectImage.textContent = option.text;
+      els.objectCount.textContent = `Image ${index + 1} of ${options.length}`;
+    }
+
+    function shiftObjectImage(direction) {
+      const person = people[state.index];
+      const options = objectOptionsFor(person);
+      const next = (currentObjectIndex(person) + direction + options.length) % options.length;
+      state.objectIndexes.set(person.name, next);
+      renderObjectImage(person);
+    }
+
+    function pickAnotherObjectImage() {
+      const person = people[state.index];
+      const options = objectOptionsFor(person);
+      const next = (currentObjectIndex(person) + 1) % options.length;
+      state.objectIndexes.set(person.name, next);
+      renderObjectImage(person);
+    }
+
+    function render() {
+      const person = people[state.index];
+      els.name.textContent = person.name;
+      els.real.textContent = person.real;
+      els.platform.textContent = person.platform;
+      els.category.textContent = person.category;
+      els.description.textContent = person.description;
+      els.faceHook.textContent = person.face;
+      els.famousLink.textContent = person.famous;
+      els.fallback.textContent = person.initials;
+      renderObjectImage(person);
+      els.famousArt.innerHTML = objectSvg("label");
+      els.platformIcon.className = `platform-icon ${person.icon}`;
+      els.platformIcon.innerHTML = iconPlay();
+      setImage(els.portrait, person.image, `${person.name} portrait`);
+      setImage(els.faceImage, person.image, `${person.name} face detail`);
+      renderConfidence();
+      renderStats();
+      renderRecent();
+      renderPeople();
+      renderReview();
+    }
+
+    function setImage(img, src, alt) {
+      img.hidden = false;
+      img.alt = alt;
+      img.src = src;
+      img.onerror = () => {
+        img.hidden = true;
+      };
+    }
+
+    function renderConfidence() {
+      els.confidenceGrid.innerHTML = "";
+      const current = state.confidence.get(people[state.index].name) || 3;
+      confidenceLabels.forEach((label, i) => {
+        const value = i + 1;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = value === current ? "selected" : "";
+        button.innerHTML = `<span>${label}</span><strong>${value}</strong>`;
+        button.addEventListener("click", () => setConfidence(value));
+        els.confidenceGrid.appendChild(button);
+      });
+    }
+
+    function setConfidence(value) {
+      const name = people[state.index].name;
+      const previous = state.confidence.get(name);
+      state.confidence.set(name, value);
+      if ((!previous || previous < 4) && value >= 4) state.recalled += 1;
+      render();
+    }
+
+    function renderStats() {
+      els.practiced.textContent = state.practiced;
+      els.recalled.textContent = state.recalled;
+      els.accuracy.textContent = `${Math.round((state.recalled / Math.max(1, state.practiced)) * 100)}%`;
+    }
+
+    function renderRecent() {
+      els.recentStrip.innerHTML = "";
+      state.recent.slice(0, 5).forEach((personIndex) => {
+        const person = people[personIndex];
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "recent-card";
+        card.innerHTML = `
+          <img src="${person.image}" alt="${person.name}" referrerpolicy="no-referrer">
+          <span class="recent-fallback" hidden>${person.initials}</span>
+          <span><strong>${person.name}</strong><span>${person.platform} / ${person.category}</span></span>
+          <span class="score-dot">${state.confidence.get(person.name) || 3}</span>
+        `;
+        const image = card.querySelector("img");
+        const fallback = card.querySelector(".recent-fallback");
+        image.onerror = () => {
+          image.hidden = true;
+          fallback.hidden = false;
+        };
+        card.addEventListener("click", () => choosePerson(personIndex));
+        els.recentStrip.appendChild(card);
+      });
+    }
+
+    function renderPeople() {
+      els.peopleGrid.innerHTML = "";
+      people.forEach((person, index) => {
+        const tile = document.createElement("button");
+        tile.type = "button";
+        tile.className = "person-tile";
+        tile.innerHTML = `
+          <img src="${person.image}" alt="${person.name}" referrerpolicy="no-referrer">
+          <span class="tile-fallback" hidden>${person.initials}</span>
+          <span><strong>${person.name}</strong><span>${person.platform} / ${person.category}</span></span>
+        `;
+        const image = tile.querySelector("img");
+        const fallback = tile.querySelector(".tile-fallback");
+        image.onerror = () => {
+          image.hidden = true;
+          fallback.hidden = false;
+        };
+        tile.addEventListener("click", () => {
+          choosePerson(index);
+          setView("practice");
+        });
+        els.peopleGrid.appendChild(tile);
+      });
+    }
+
+    function renderReview() {
+      const reviewNames = people
+        .filter((person) => (state.confidence.get(person.name) || 3) < 3)
+        .map((person) => person.name);
+      els.reviewBox.textContent = reviewNames.length
+        ? `Queued for review: ${reviewNames.join(", ")}. Pick another practice round after reviewing these mental pictures.`
+        : "Names you mark below 3 confidence are queued here for your next spaced review session.";
+    }
+
+    function choosePerson(index) {
+      state.index = index;
+      state.practiced += 1;
+      state.recent = [index, ...state.recent.filter((item) => item !== index)];
+      render();
+    }
+
+    function pickRandomPerson() {
+      let next = state.index;
+      while (next === state.index && people.length > 1) {
+        next = Math.floor(Math.random() * people.length);
+      }
+      choosePerson(next);
+    }
+
+    function setView(view) {
+      document.getElementById("practice-view").style.display = view === "practice" ? "block" : "none";
+      document.getElementById("people-view").classList.toggle("active", view === "people");
+      document.getElementById("review-view").classList.toggle("active", view === "review");
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === view);
+      });
+    }
+
+    document.getElementById("pick-person").addEventListener("click", pickRandomPerson);
+    document.getElementById("save-person").addEventListener("click", () => setConfidence(5));
+    document.getElementById("prev-object").addEventListener("click", () => shiftObjectImage(-1));
+    document.getElementById("next-object").addEventListener("click", () => shiftObjectImage(1));
+    document.getElementById("another-object").addEventListener("click", pickAnotherObjectImage);
+    document.querySelectorAll("[data-view]").forEach((button) => {
+      button.addEventListener("click", () => setView(button.dataset.view));
+    });
+
+    render();
+  </script>
+</body>
+</html>
